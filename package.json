@@ -1,0 +1,25 @@
+{
+  "name": "backEnd",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": { 
+    "dev": "nodemon app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@koa/cors": "^5.0.0",
+    "@koa/router": "^13.1.1",
+    "date-fns": "^4.1.0",
+    "dotenv": "^17.2.1",
+    "koa": "^3.0.1",
+    "koa-bodyparser": "^4.4.1",
+    "koa-json": "^2.0.2",
+    "koa-router": "^13.1.1",
+    "module-alias": "^2.2.3",
+    "openai": "^5.11.0"
+  }
+}
