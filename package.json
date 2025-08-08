@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "type": "module",
-  "scripts": { 
+  "scripts": {
     "dev": "nodemon app.js"
   },
   "keywords": [],
@@ -13,6 +13,7 @@
   "dependencies": {
     "@koa/cors": "^5.0.0",
     "@koa/router": "^13.1.1",
+    "axios": "^1.11.0",
     "date-fns": "^4.1.0",
     "dotenv": "^17.2.1",
     "koa": "^3.0.1",
