@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import { format } from 'date-fns';
 // import readline from 'readline';
 import axios from 'axios';
+import json from "koa-json";
 
 dotenv.config();
 
@@ -32,7 +33,7 @@ const tools = [
         "type": "function",
         "function": {
             "name": "getCurrentWeather",
-            "description": "查询指定城市的天气",
+            "description": "查询指定城市的最近三天的天气",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -40,6 +41,10 @@ const tools = [
                     "location": {
                         "type": "string",
                         "description": "城市或县区，比如北京市、杭州市、余杭区等。"
+                    },
+                    "days": {
+                        "type": "string",
+                        "description": "查询的天数，默认为3，可选1-30天。"
                     }
                 },
                 "required": ["location"]
@@ -48,11 +53,18 @@ const tools = [
     }
 ];
 
+const exampleResponse = {
+    location: "杭州市的天气查询信息如下：",
+    toolData: [{ fxDate: '2025-08-14', textDay: "多云", tempMax: "30", tempMin: "20" }],
+    toolName: "getCurrentWeather"
+};
 
 class ToolController {
     //查询天气
-    static async getCurrentWeather(location) {
-        const token = "eyJhbGciOiJFZERTQSIsImtpZCI6IktKQjNFTk03Mk0ifQ.eyJzdWIiOiIyQ1RNODRDSzZRIiwiaWF0IjoxNzU1MTM5ODQ2LCJleHAiOjE3NTUxNDM0NDZ9.hI_3y-5VH9Oj3Ajuq4_Ky7B-L8aQi41U4_NasWcI013I5vOQDtOxohoPvqtzWdDmjynVd3Ow3o98qXb-kmgqAA";
+    static async getCurrentWeather(location, days = 3) {
+        // return '{"location":"杭州市","toolData":[{"fxDate":"2025-08-14","textDay":"多云","tempMax":"36","tempMin":"27"},{"fxDate":"2025-08-15","textDay":"晴","tempMax":"36","tempMin":"26"},{"fxDate":"2025-08-16","textDay":"晴","tempMax":"37","tempMin":"27"}],"toolName":"getCurrentWeather"}';
+        console.log('传给工具的参数：', location, days);
+        const token = "eyJhbGciOiJFZERTQSIsImtpZCI6IktKQjNFTk03Mk0ifQ.eyJzdWIiOiIyQ1RNODRDSzZRIiwiaWF0IjoxNzU1MTUyMjY4LCJleHAiOjE3NTUxNTU4Njh9.gu_N88B6LA96mhMVwJqXj99g4td05-Z0m6ictCr_lcfnVmA1JD-aw64fdsgGfLP2hnXSnEomfihBD0VADCaaDw";
 
         //根据城市名字查询城市id
         const url_get_id = `${process.env.HEFENGTIANQI_HOST}/geo/v2/city/lookup`;
@@ -65,8 +77,9 @@ class ToolController {
             },
         });
         const data = response.data;
-        //根据城市id查询近3天的天气
-        const url_get_weather = `${process.env.HEFENGTIANQI_HOST}/v7/weather/3d`;
+        //根据城市id查询天气
+        const useDay = [3, 7, 10, 15, 30].find(item => days <= item);
+        const url_get_weather = `${process.env.HEFENGTIANQI_HOST}/v7/weather/${useDay}d`;
         const response2 = await axios({
             type: "get",
             url: url_get_weather,
@@ -80,11 +93,20 @@ class ToolController {
 
         if (data2.code === '200') {
             // 成功获取天气数据
-            const weatherInfo = data2.daily; // 获取第一天的天气预报
+            let weatherInfo = data2.daily; // 获取第一天的天气预报
             console.log(weatherInfo)
-            return `${weatherInfo[0].fxDate}（今天）：${location}的天气：${weatherInfo[0].textDay}，最高温度${weatherInfo[0].tempMax}°C，最低温度${weatherInfo[0].tempMin}°C。
-            ${weatherInfo[1].fxDate}（明天）：${location}的天气：${weatherInfo[1].textDay}，最高温度${weatherInfo[1].tempMax}°C，最低温度${weatherInfo[1].tempMin}°C。
-            ${weatherInfo[2].fxDate}（后天）：${location}的天气：${weatherInfo[2].textDay}，最高温度${weatherInfo[2].tempMax}°C，最低温度${weatherInfo[2].tempMin}°C。`;
+            weatherInfo = weatherInfo.map(e => {
+                const { fxDate, textDay, tempMax, tempMin } = e;
+                return { fxDate, textDay, tempMax, tempMin }
+            })
+            return JSON.stringify({
+                location: location + '的天气查询信息如下：',
+                toolData: weatherInfo,
+                toolName: "getCurrentWeather"
+            }) + "请以JSON格式输出给用户。"
+            // return `${weatherInfo[0].fxDate}（今天）：${location}的天气：${weatherInfo[0].textDay}，最高温度${weatherInfo[0].tempMax}°C，最低温度${weatherInfo[0].tempMin}°C。
+            // ${weatherInfo[1].fxDate}（明天）：${location}的天气：${weatherInfo[1].textDay}，最高温度${weatherInfo[1].tempMax}°C，最低温度${weatherInfo[1].tempMin}°C。
+            // ${weatherInfo[2].fxDate}（后天）：${location}的天气：${weatherInfo[2].textDay}，最高温度${weatherInfo[2].tempMax}°C，最低温度${weatherInfo[2].tempMin}°C。`;
         } else {
             // API 返回错误
             return `${location}的天气信息查询失败，错误代码：${data.code}`;
@@ -105,16 +127,30 @@ class ToolController {
             model: "qwen-turbo",
             messages: messages,
             tools: tools,
+            // response_format: {
+            //     type: "json_object"
+            // }
         });
         return response;
     }
+
+
+
 
     // 一次性输出
     async getWeather(ctx) {
 
         const messages = [
-            { "role": "system", "content": `你是一个旅游助手，你的名字叫小火云。你可以提供旅游信息、查询天气等服务。
-                如果用户查询明后天天气，回答时请标注出对应的年月日。`},
+            {
+                "role": "system",
+                "content":
+                    `你是一个旅游助手，你的名字叫小火云。你可以提供旅游信息、查询天气等服务。
+                    如果使用天气查询的工具，请以JSON格式输出给用户。
+                    示例：
+                    Q：${JSON.stringify(exampleResponse)}
+                    A：${JSON.stringify(exampleResponse)}
+                    `
+            },
             // 但是你不知道当前的日期和时间，如果用户想知道当前的年月日或时间，请使用function calls工具查询结果。
             { "role": "user", "content": ctx.request.body.content }
         ];
@@ -133,14 +169,15 @@ class ToolController {
                 let toolInfo = {};
                 if (assistantOutput.tool_calls[0].function.name == "getCurrentWeather") {
                     toolInfo = { "role": "tool" };
-                    let location = JSON.parse(assistantOutput.tool_calls[0].function.arguments)["location"];
-                    toolInfo["content"] = await ToolController.getCurrentWeather(location);
+                    let { location, days = "" } = JSON.parse(assistantOutput.tool_calls[0].function.arguments);
+                    toolInfo["content"] = await ToolController.getCurrentWeather(location, days);
                 } else if (assistantOutput.tool_calls[0].function.name == "getCurrentTime") {
                     toolInfo = { "role": "tool" };
                     toolInfo["content"] = ToolController.getCurrentTime();
                 }
                 console.log(`工具输出信息：${JSON.stringify(toolInfo)}`);
                 console.log("=".repeat(100));
+
                 messages.push(toolInfo);
                 assistantOutput = (await ToolController.getResponse(messages)).choices[0].message;
                 if (Object.is(assistantOutput.content, null)) {
@@ -148,20 +185,20 @@ class ToolController {
                 }
                 messages.push(assistantOutput);
                 i += 1;
-                console.log(`第${i}轮大模型输出信息：${JSON.stringify(assistantOutput)}`)
+                console.log(`第${i}轮大模型输出信息：${JSON.stringify(assistantOutput.content)}`)
             }
+
             console.log("=".repeat(100));
             console.log(`最终大模型输出信息：${JSON.stringify(assistantOutput.content)}`);
-  
+
             // console.log(completion.choices[0].message.content)
-            // messages.push(completion.choices[0].message);
         }
 
-
+        // ctx.response.type = "application/json";
         ctx.body = {
             code: "000000",
             message: "请求成功",
-            data: JSON.stringify(assistantOutput.content)
+            data: assistantOutput.content
         }
         ctx.status = 200;
 

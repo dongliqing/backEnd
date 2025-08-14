@@ -3,7 +3,7 @@ import Koa from 'koa';
 import json from 'koa-json';
 import bodyParser from 'koa-bodyparser';
 import cors from '@koa/cors';
-import router from './router.js';
+import router from './router/router.js';
 
 // const Koa = require('koa');
 // const json = require('koa-json'); //将http响应的数据格式化为JSON
@@ -19,35 +19,6 @@ app.use(json()); //使用json中间件将响应数据格式化为JSON
 app.use(bodyParser()); //使用bodyParser中间件解析请求体
 app.use(router.routes()); //使用路由中间件
 app.use(router.allowedMethods()); //允许路由方法
-
-// router.get('/api/weather', async (ctx) => {
-//     const { id } = ctx.query; //获取查询参数id
-//     ctx.body = {
-//         code: "000000",
-//         message: "请求成功",
-//         data: [1, 2, 3],
-//     }
-//     ctx.status = 200; //设置响应状态码为200
-// });
-
-
-// router.post('/api/send', async (ctx) => {
-//     const { id } = ctx.request.body; //获取请求体中的id
-//     ctx.body = {
-//         code: "000000",
-//         message: "请求成功",
-//         data: [1, 2, 3],
-//     }
-//     ctx.status = 200; //设置响应状态码为200
-// });
-
-
-
-
-
-
-
-
 
 
 

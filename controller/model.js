@@ -15,34 +15,33 @@ const openai = new OpenAI(
 
 
 const messages = [
-    { role: "system", content: "你是一个旅游助手，你的名字叫小董。你可以提供旅游信息、查询天气和火车票等服务。" },
+    { role: "system", content: "你是一个旅游助手，你的名字叫小火云。你可以提供旅游信息、查询天气等服务。" },
     // { role: "user", content: "你是谁？" }
 ]
 
 class ModelController {
     //文本交流 一次性输出
     async textChat(ctx) {
-
-
         const completion = await openai.chat.completions.create({
             // 模型列表：https://help.aliyun.com/zh/model-studio/getting-started/models
-            model: "qwen-turbo",  // qwen-plus 属于 qwen3 模型，如需开启思考模式，请参见：https://help.aliyun.com/zh/model-studio/deep-thinking
+            model: "qwen-plus",  // qwen-plus 属于 qwen3 模型，如需开启思考模式，请参见：https://help.aliyun.com/zh/model-studio/deep-thinking
             messages: [
-                { role: "system", content: "你是一个旅游助手，你的名字叫云游官。你可以提供旅游信息、查询天气和火车票等服务。" },
+                ...messages,
                 { role: "user", content: ctx.request.body.content }
             ],
         });
+        // console.log(completion)
 
+        ctx.response.type = 'application/json';
         ctx.body = {
             code: "000000",
             message: "请求成功",
-            data: completion.choices[0].message.content,
+            data: completion,
         }
         ctx.status = 200; //设置响应状态码为200
 
         // console.log(ctx.request.body);
         // console.log(completion.choices[0].message.content)
-        // messages.push(completion.choices[0].message);
     }
 
     //文本交流 流式输出
@@ -61,9 +60,9 @@ class ModelController {
 
         const completion = await openai.chat.completions.create({
             // 模型列表：https://help.aliyun.com/zh/model-studio/getting-started/models
-            model: "qwen-turbo",  // qwen-plus 属于 qwen3 模型，如需开启思考模式，请参见：https://help.aliyun.com/zh/model-studio/deep-thinking
+            model: "qwen-plus",  // qwen-plus 属于 qwen3 模型，如需开启思考模式，请参见：https://help.aliyun.com/zh/model-studio/deep-thinking
             messages: [
-                { role: "system", content: "你是一个旅游助手，你的名字叫小董。你可以提供旅游信息、查询天气和火车票等服务。" },
+                ...messages,
                 { role: "user", content: ctx.request.body.content }
             ],
             stream: true,
@@ -115,7 +114,7 @@ class ModelController {
 
         const completion = await openai.chat.completions.create({
             // 模型列表：https://help.aliyun.com/zh/model-studio/getting-started/models
-            model: "qwen-turbo",  // qwen-plus 属于 qwen3 模型，如需开启思考模式，请参见：https://help.aliyun.com/zh/model-studio/deep-thinking
+            model: "qwen-plus",  // qwen-plus 属于 qwen3 模型，如需开启思考模式，请参见：https://help.aliyun.com/zh/model-studio/deep-thinking
             messages: messages,
             stream: true,
             stream_options: {
