@@ -124,7 +124,7 @@ class ToolController {
     }
     static async getResponse(messages) {
         const response = await openai.chat.completions.create({
-            model: "qwen-turbo",
+            model: "qwen-plus",
             messages: messages,
             tools: tools,
             // response_format: {
@@ -185,11 +185,11 @@ class ToolController {
                 }
                 messages.push(assistantOutput);
                 i += 1;
-                console.log(`第${i}轮大模型输出信息：${JSON.stringify(assistantOutput.content)}`)
+                console.log(`第${i}轮大模型输出信息：${assistantOutput.content}`)
             }
 
             console.log("=".repeat(100));
-            console.log(`最终大模型输出信息：${JSON.stringify(assistantOutput.content)}`);
+            console.log(`最终大模型输出信息：${assistantOutput.content}`);
 
             // console.log(completion.choices[0].message.content)
         }
