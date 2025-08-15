@@ -2,7 +2,7 @@ import Router from 'koa-router';
 import user from '../controller/user.js';
 import model from '../controller/model.js';
 import tools from '../controller/tools.js';
-import structuring from '../controller/structuring.js';
+import format from '../controller/format.js';
  
 const router = new Router();
  
@@ -19,7 +19,7 @@ router.post('/api/multiRoundsStreamTextChat', model.MultiRoundsStreamTextChat);
 //使用工具
 router.post('/api/textChatUseTool', tools.getWeather);
 //结构化输出
-router.post('/api/textChatUseToolFormat', structuring.getWeather);
+router.post('/api/textChatUseToolFormat', format.getWeather);
 
 
 export default router;

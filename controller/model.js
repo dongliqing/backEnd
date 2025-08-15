@@ -8,7 +8,6 @@ const openai = new OpenAI(
     {
         // 若没有配置环境变量，请用百炼API Key将下行替换为：apiKey: "sk-xxx",
         apiKey: process.env.QIANWEN_KEY,
-        // apiKey: process.env.QIANWEN_KEY,  
         baseURL: "https://dashscope.aliyuncs.com/compatible-mode/v1",
     }
 );
@@ -26,7 +25,7 @@ class ModelController {
             // 模型列表：https://help.aliyun.com/zh/model-studio/getting-started/models
             model: "qwen-plus",  // qwen-plus 属于 qwen3 模型，如需开启思考模式，请参见：https://help.aliyun.com/zh/model-studio/deep-thinking
             messages: [
-                ...messages,
+                { role: "system", content: "你是一个旅游助手，你的名字叫小火云。你可以提供旅游信息、查询天气等服务。" },
                 { role: "user", content: ctx.request.body.content }
             ],
         });
@@ -62,7 +61,7 @@ class ModelController {
             // 模型列表：https://help.aliyun.com/zh/model-studio/getting-started/models
             model: "qwen-plus",  // qwen-plus 属于 qwen3 模型，如需开启思考模式，请参见：https://help.aliyun.com/zh/model-studio/deep-thinking
             messages: [
-                ...messages,
+                { role: "system", content: "你是一个旅游助手，你的名字叫小火云。你可以提供旅游信息、查询天气等服务。" },
                 { role: "user", content: ctx.request.body.content }
             ],
             stream: true,

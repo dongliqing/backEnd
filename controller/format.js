@@ -64,7 +64,7 @@ class ToolController {
     static async getCurrentWeather(location, days = 3) {
         // return '{"location":"杭州市","toolData":[{"fxDate":"2025-08-14","textDay":"多云","tempMax":"36","tempMin":"27"},{"fxDate":"2025-08-15","textDay":"晴","tempMax":"36","tempMin":"26"},{"fxDate":"2025-08-16","textDay":"晴","tempMax":"37","tempMin":"27"}],"toolName":"getCurrentWeather"}';
         console.log('传给工具的参数：', location, days);
-        const token = "eyJhbGciOiJFZERTQSIsImtpZCI6IktKQjNFTk03Mk0ifQ.eyJzdWIiOiIyQ1RNODRDSzZRIiwiaWF0IjoxNzU1MTUyMjY4LCJleHAiOjE3NTUxNTU4Njh9.gu_N88B6LA96mhMVwJqXj99g4td05-Z0m6ictCr_lcfnVmA1JD-aw64fdsgGfLP2hnXSnEomfihBD0VADCaaDw";
+        const token = "eyJhbGciOiJFZERTQSIsImtpZCI6IktKQjNFTk03Mk0ifQ.eyJzdWIiOiIyQ1RNODRDSzZRIiwiaWF0IjoxNzU1MjQ2NTcyLCJleHAiOjE3NTUyNTAxNzJ9.5c7m3vYaaYpS52ZWBjkPxOTPo5s3NdCsJA_9D-FfR5xp-zmyAAZZx0w3J9kHeHxg55citvpmd5vzo0iDMDNqCw";
 
         //根据城市名字查询城市id
         const url_get_id = `${process.env.HEFENGTIANQI_HOST}/geo/v2/city/lookup`;
@@ -94,7 +94,7 @@ class ToolController {
         if (data2.code === '200') {
             // 成功获取天气数据
             let weatherInfo = data2.daily; // 获取第一天的天气预报
-            console.log(weatherInfo)
+            // console.log(weatherInfo)
             weatherInfo = weatherInfo.map(e => {
                 const { fxDate, textDay, tempMax, tempMin } = e;
                 return { fxDate, textDay, tempMax, tempMin }
@@ -133,9 +133,6 @@ class ToolController {
         });
         return response;
     }
-
-
-
 
     // 一次性输出
     async getWeather(ctx) {
