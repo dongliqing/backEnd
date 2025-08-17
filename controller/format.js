@@ -64,7 +64,6 @@ class ToolController {
     static async getCurrentWeather(location, days = 3) {
         // return '{"location":"杭州市","toolData":[{"fxDate":"2025-08-14","textDay":"多云","tempMax":"36","tempMin":"27"},{"fxDate":"2025-08-15","textDay":"晴","tempMax":"36","tempMin":"26"},{"fxDate":"2025-08-16","textDay":"晴","tempMax":"37","tempMin":"27"}],"toolName":"getCurrentWeather"}';
         console.log('传给工具的参数：', location, days);
-        const token = "eyJhbGciOiJFZERTQSIsImtpZCI6IktKQjNFTk03Mk0ifQ.eyJzdWIiOiIyQ1RNODRDSzZRIiwiaWF0IjoxNzU1MjQ2NTcyLCJleHAiOjE3NTUyNTAxNzJ9.5c7m3vYaaYpS52ZWBjkPxOTPo5s3NdCsJA_9D-FfR5xp-zmyAAZZx0w3J9kHeHxg55citvpmd5vzo0iDMDNqCw";
 
         //根据城市名字查询城市id
         const url_get_id = `${process.env.HEFENGTIANQI_HOST}/geo/v2/city/lookup`;
@@ -73,7 +72,7 @@ class ToolController {
             url: url_get_id,
             params: { location },
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${process.env.HEFENGTIANQI_TOKEN}`,
             },
         });
         const data = response.data;
@@ -85,7 +84,7 @@ class ToolController {
             url: url_get_weather,
             params: { location: data.location[0].id },
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${process.env.HEFENGTIANQI_TOKEN}`,
             },
         });
         const data2 = response2.data;
@@ -148,7 +147,6 @@ class ToolController {
                     A：${JSON.stringify(exampleResponse)}
                     `
             },
-            // 但是你不知道当前的日期和时间，如果用户想知道当前的年月日或时间，请使用function calls工具查询结果。
             { "role": "user", "content": ctx.request.body.content }
         ];
         let i = 1;

@@ -14,7 +14,7 @@ importPKCS8(YourPrivateKey, 'EdDSA').then((privateKey) => {
         kid: 'KJB3ENM72M'  //JWT凭据ID
     }
     const iat = Math.floor(Date.now() / 1000) - 30;
-    const exp = iat + 3600; //n秒后过期
+    const exp = iat + 86400; //n秒后过期
     const customPayload = {
         sub: '2CTM84CK6Q',  //项目ID
         iat: iat,

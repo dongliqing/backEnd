@@ -52,7 +52,6 @@ const tools = [
 class ToolController {
     //查询天气
     static async getCurrentWeather(location) {
-        const token = "eyJhbGciOiJFZERTQSIsImtpZCI6IktKQjNFTk03Mk0ifQ.eyJzdWIiOiIyQ1RNODRDSzZRIiwiaWF0IjoxNzU1MTM5ODQ2LCJleHAiOjE3NTUxNDM0NDZ9.hI_3y-5VH9Oj3Ajuq4_Ky7B-L8aQi41U4_NasWcI013I5vOQDtOxohoPvqtzWdDmjynVd3Ow3o98qXb-kmgqAA";
 
         //根据城市名字查询城市id
         const url_get_id = `${process.env.HEFENGTIANQI_HOST}/geo/v2/city/lookup`;
@@ -61,7 +60,7 @@ class ToolController {
             url: url_get_id,
             params: { location },
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${process.env.HEFENGTIANQI_TOKEN}`,
             },
         });
         const data = response.data;
@@ -72,7 +71,7 @@ class ToolController {
             url: url_get_weather,
             params: { location: data.location[0].id },
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${process.env.HEFENGTIANQI_TOKEN}`,
             },
         });
         const data2 = response2.data;
@@ -115,7 +114,6 @@ class ToolController {
         const messages = [
             { "role": "system", "content": `你是一个旅游助手，你的名字叫小火云。你可以提供旅游信息、查询天气等服务。
                 如果用户查询明后天天气，回答时请标注出对应的年月日。`},
-            // 但是你不知道当前的日期和时间，如果用户想知道当前的年月日或时间，请使用function calls工具查询结果。
             { "role": "user", "content": ctx.request.body.content }
         ];
         let i = 1;
