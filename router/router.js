@@ -17,9 +17,9 @@ router.post('/api/streamTextChat', model.streamTextChat);
 //多轮对话
 router.post('/api/multiRoundsStreamTextChat', model.MultiRoundsStreamTextChat);
 //使用工具
-router.post('/api/textChatUseTool', tools.getWeather);
+router.post('/api/textChatUseTool', tools.main);
 //结构化输出
-router.post('/api/textChatUseToolFormat', format.getWeather);
+router.post('/api/textChatUseToolFormat', format.main);
 
 
 export default router;

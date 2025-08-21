@@ -109,7 +109,7 @@ class ToolController {
     }
 
     // 一次性输出
-    async getWeather(ctx) {
+    async main(ctx) {
 
         const messages = [
             { "role": "system", "content": `你是一个旅游助手，你的名字叫小火云。你可以提供旅游信息、查询天气等服务。
@@ -127,6 +127,20 @@ class ToolController {
         if (!("tool_calls" in assistantOutput)) {
             console.log(`无需调用工具，我可以直接回复：${assistantOutput.content}`);
         } else {
+
+            // {
+            //     "content": "",
+            //     "role": "assistant",
+            //     "tool_calls": [
+            //         {
+            //             "index": 0,
+            //             "id": "call_16ce05e45c90479fa62e64",
+            //             "type": "function",
+            //             "function": {"name":"getCurrentWeather","arguments":"{\"days\": \"1\", \"location\": \"杭州市\"}"}
+            //         }
+            //     ]
+            // }
+
             while ("tool_calls" in assistantOutput) {
                 let toolInfo = {};
                 if (assistantOutput.tool_calls[0].function.name == "getCurrentWeather") {

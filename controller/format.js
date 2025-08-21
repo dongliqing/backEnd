@@ -53,11 +53,11 @@ const tools = [
     }
 ];
 
-const exampleResponse = {
+const exampleResponse = JSON.stringify({
     location: "杭州市的天气查询信息如下：",
     toolData: [{ fxDate: '2025-08-14', textDay: "多云", tempMax: "30", tempMin: "20" }],
     toolName: "getCurrentWeather"
-};
+});
 
 class ToolController {
     //查询天气
@@ -134,7 +134,7 @@ class ToolController {
     }
 
     // 一次性输出
-    async getWeather(ctx) {
+    async main(ctx) {
 
         const messages = [
             {
@@ -143,8 +143,8 @@ class ToolController {
                     `你是一个旅游助手，你的名字叫小火云。你可以提供旅游信息、查询天气等服务。
                     如果使用天气查询的工具，请以JSON格式输出给用户。
                     示例：
-                    Q：${JSON.stringify(exampleResponse)}
-                    A：${JSON.stringify(exampleResponse)}
+                    Q：${exampleResponse}
+                    A：${exampleResponse}
                     `
             },
             { "role": "user", "content": ctx.request.body.content }
